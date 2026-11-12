@@ -1,0 +1,20 @@
+name: Refresh amontlabs.com
+
+# Releases are published by hand, so the release event fires; tell the site to refresh now rather than on its
+# next scheduled run.
+on:
+  release:
+    types: [published]
+
+permissions: {}
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Refresh amontlabs.com
+        env:
+          GH_TOKEN: ${{ secrets.SITE_DISPATCH_TOKEN }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then echo "::warning::No SITE_DISPATCH_TOKEN; amontlabs.com refreshes on its schedule"; exit 0; fi
+          gh api repos/amontlabs/amontlabs.com/dispatches -f event_type=release
